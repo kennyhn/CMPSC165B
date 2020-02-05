@@ -89,9 +89,7 @@ def white_wine_run(train_white_x, train_white_y, test_white_x, test_white_y):
 def main():
     # import all the data
     # TODO: call the load_data() function here and load data from file
-    x, y = load_data("Admission_Predict.csv")
-    param = SGDSolver(x, y, nepoch = 1000)
-    SGDSolver(x, y, param=param)
+    
 
     """
     train_red_x, train_red_y        = load_data('hw2_winequality-red_train.npy')
