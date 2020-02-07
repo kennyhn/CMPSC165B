@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import numpy as np
-from sgd import SGDSolver
+import numpy                    as np
+from sgd                        import SGDSolver
+import binary_classification    as bc
 import csv
 
 def load_data(filename):
@@ -14,9 +15,14 @@ def load_data(filename):
     data_x  = []
     data_y  = []
     # TODO: Finish this function here.
-    data = np.genfromtxt(filename, delimiter = ",", skip_header = 1)
-    data_x = data[:, :-1]
-    data_y = data[:, -1:]
+    if ".csv" in filename:
+        data = np.genfromtxt(filename, delimiter = ",", skip_header = 1)
+        data_x = data[:, :-1]
+        data_y = data[:, -1:]
+    elif ".npy" in filename:
+        data = np.load(filename)
+        data_x = data[:, :-1]
+        data_y = data[:, -1:]
     return data_x, data_y
 
 def red_wine_run(train_red_x, train_red_y, test_red_x, test_red_y):
@@ -25,11 +31,14 @@ def red_wine_run(train_red_x, train_red_y, test_red_x, test_red_y):
 
     # Training Phase
     # values for 2D-grid search
-    lam     = []        # regularization weight [min, max]
-    alpha   = []        # learning rate [min, max]
-    nepochs = []        # sample # of epochs
+    lam     = [1e-3, 2]           # regularization weight [min, max]
+    alpha   = [1e-6, 1e-4]        # learning rate [min, max]
+    nepochs = 50        # sample # of epochs
     epsilon = 0.0       # epsilon value
-    param   = []
+    param   = np.random.standard_normal(size = np.shape(train_red_x)[1]+1)
+    param   = np.reshape(param, newshape = (np.shape(train_red_x)[1]+1, 1,))
+    train_red_y   = bc.classify_result(train_red_y)
+    test_red_y   = bc.classify_result(test_red_y)
     # end TODO
 
     # using this alpha and lambda values run the training
@@ -44,7 +53,7 @@ def red_wine_run(train_red_x, train_red_y, test_red_x, test_red_y):
     # Note: validation and testing phases only take a single value for (alpha, lam) and not a list. 
     # Validation Phase
     x_mse_val = SGDSolver('Validation', test_red_x, test_red_y, alpha, lam, nepochs, epsilon, param)
-    print(f"Current Red Wine Data MSE is: {mse_val}.")
+    print(f"Current Red Wine Data MSE is: {x_mse_val}.")
 
     # Testing Phase
     red_wine_predicted = SGDSolver('Testing', test_red_x, test_red_y, alpha, lam, nepochs, epsilon, param)
@@ -59,11 +68,14 @@ def white_wine_run(train_white_x, train_white_y, test_white_x, test_white_y):
     # TODO: Change hyperparameter values here as needed 
     # similar to red_wine_run
     # values for 2D-grid search
-    lam     = []        # regularization weight [min, max]
-    alpha   = []        # learning rate [min, max]
-    nepochs = []        # sample # of epochs
-    epsilon = 0.0       # epsilon value
-    param   = []
+    lam             = [1e-3, 2]           # regularization weight [min, max]
+    alpha           = [1e-6, 1e-4]        # learning rate [min, max]
+    nepochs         = 50                  # sample # of epochs
+    epsilon         = 0.0                 # epsilon value
+    param           = np.random.standard_normal(size = np.shape(train_white_x)[1]+1)
+    param           = np.reshape(param, newshape = (np.shape(train_white_x)[1]+1, 1,))
+    train_white_y   = bc.classify_result(train_white_y)
+    test_white_y    = bc.classify_result(test_white_y)
     # end TODO
 
     # Training Phase
@@ -78,7 +90,7 @@ def white_wine_run(train_white_x, train_white_y, test_white_x, test_white_y):
     # Note: validation and testing phases only take a single value for (alpha, lam) and not a list. 
     # Validation Phase
     x_mse_val = SGDSolver('Validation', test_white_x, test_white_y, alpha, lam, nepochs, epsilon, param)
-    print(f"Current White Wine Data MSE is: {mse_val}.")
+    print(f"Current White Wine Data MSE is: {x_mse_val}.")
 
     # Testing Phase
     white_wine_predicted = SGDSolver('Testing', test_white_x, test_white_y, alpha, lam, nepochs, epsilon, param)
@@ -89,9 +101,16 @@ def white_wine_run(train_white_x, train_white_y, test_white_x, test_white_y):
 def main():
     # import all the data
     # TODO: call the load_data() function here and load data from file
-    
+    """
+    x, y = load_data('hw2_winequality-red_train.npy')
+    y                   = bc.classify_result(y)
+
+
+    param, alpha, lam = SGDSolver('Training', x, y, nepoch = 50)
+    SGDSolver('Validation', x,y, param = param)
 
     """
+
     train_red_x, train_red_y        = load_data('hw2_winequality-red_train.npy')
     test_red_x, test_red_y          = load_data('hw2_winequality-red_test.npy')
     train_white_x, train_white_y    = load_data('hw2_winequality-white_train.npy')
@@ -100,7 +119,7 @@ def main():
     # Tests
     red_wine_run(train_red_x, train_red_y, test_red_x, test_red_y)
     white_wine_run(train_white_x, train_white_y, test_white_x, test_white_y)
-    """
+
 if __name__ == "__main__":
     main()
 
