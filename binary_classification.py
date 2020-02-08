@@ -4,21 +4,22 @@ import math
 import numpy as np
 
 def find_largest_of_classes(class0, class1, class2):
-    if class1 > class0 and class1 > class2:
+    if class0 > class1 and class0 > class2:
+        # if poor has highest value
+        value = 0
+    elif class1 > class0 and class1 > class2:
         # if median has highest value
         value = 1
-    elif class2 > class0 and class2 > class1:
-        # if excellent has highest value
-        value = 2
     else:
-        # otherwise poor has highest value
-        value = 0
+        # otherwise excellent has highest value
+        value = 2
     return value
 
 def sigma_func(function_value):
     return 1/(1+math.exp(-function_value))
 
 def cross_entropy(x, y, param):
+    
     # Have to make some logic to classify the result as 1 and 0
 
     n, _            = np.shape(x)
@@ -66,15 +67,10 @@ def classify_prediction(x, param):
     n, k            = np.shape(x) # n rows and k columns
     ones_n          = np.ones(shape = (n, 1,))
     temp_x          = np.append(x, ones_n, axis = 1)
-    param_class0    = np.zeros(shape = (k+1, 1))
-    param_class1    = np.zeros(shape = (k+1, 1))
-    param_class2    = np.zeros(shape = (k+1, 1))
-    # Get the parameters for each class
-    for i in range(k+1):
-        param_class0[i][0] = param[i][0]
-        param_class1[i][0] = param[i][1]
-        param_class2[i][0] = param[i][2]
-
+    param_class0    = param[:k+1][:]
+    param_class1    = param[k+1:2*k+2][:]
+    param_class2    = param[2*k+2:][:]
+    
     z0              = np.matmul(temp_x, param_class0)
     z1              = np.matmul(temp_x, param_class1)
     z2              = np.matmul(temp_x, param_class2)
@@ -82,7 +78,7 @@ def classify_prediction(x, param):
     f0              = np.vectorize(sigma_func)(z0)
     f1              = np.vectorize(sigma_func)(z1)
     f2              = np.vectorize(sigma_func)(z2)
-  
+    
     y_pred          = np.vectorize(find_largest_of_classes)(f0, f1, f2)
     return y_pred
     
