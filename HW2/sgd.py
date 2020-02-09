@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 import numpy                    as np
 import binary_classification    as bc
-from sklearn                    import svm
-import comparison_functions     as cf
 
-def SGDSolver(phase, x=None, y=None, alpha=[1e-5, 1e-3], lam=[1e-3, 2], nepoch=None, epsilon=10 ** (-6),
+def SGDSolver(phase, x=None, y=None, alpha=[1e-5, 1e-3], lam=[1e-3, 2], nepoch=None, epsilon = 10 ** (-6),
               param=None):
     
-    lam             = [1e-6, 0.2]           # regularization weight [min, max]
-    alpha           = [1e-6, 2e-4]
-    nepoch          = 25                  # sample # of epochs
+    lam             = [1e-3, 0.2]           # regularization weight [min, max]
+    alpha           = [1e-6, 1e-5]
+    nepoch          = 250 #250                 # sample # of epochs
+    epsilon         = 0.05
+    y               = bc.classify_real_result(y) # Separate data into classes
 
-    y               = bc.classify_result(y) # Separate data into classes
+
+    x               = bc.remove_correlated_columns(x)
 
     # normalize data
     if x is not None:
@@ -68,8 +69,8 @@ def training_logistic_regression(x, y, alpha, lam, param, nepoch, epsilon):
 
 
     # How many steps should be taken when searching for the best lr and rt
-    stepalph                = (alpha[1] - alpha[0]) / 15
-    steplam                 = (lam[1] - lam[0]) / 10
+    stepalph                = (alpha[1] - alpha[0]) / 5
+    steplam                 = (lam[1] - lam[0]) / 5
 
     n, k                    = np.shape(x) # x have n rows and k columns
     
@@ -97,7 +98,7 @@ def training_logistic_regression(x, y, alpha, lam, param, nepoch, epsilon):
                 f               = np.vectorize(bc.sigma_func)(z_temp)
 
                 grad_w          = -np.matmul(np.transpose(y-f), x)
-                grad_w          = np.reshape(grad_w, newshape = (k, 1))
+                grad_w          = np.reshape(grad_w, newshape = (k, 1,)) # To make it a vector
                 grad_w          += 2*regterm*w
                 
 
@@ -108,7 +109,7 @@ def training_logistic_regression(x, y, alpha, lam, param, nepoch, epsilon):
                 w               += -lr*grad_w
                 b_scalar        += -lr*grad_b[0][0]
                 param           = np.append(w, b_scalar)
-                param           = np.reshape(param, newshape = (k+1, 1))
+                param           = np.reshape(param, newshape = (k+1, 1,))
                 
                 # Calculate cross entropy with new w and b
                 crossentropy    = bc.cross_entropy(x, y, param)
@@ -242,85 +243,3 @@ def massage_data(x): # kxn array:
             
     return x
 
-
-
-def training_with_svm(x, y_real):
-    n, _                = np.shape(x)
-    x                   = massage_data(x)
-    classifier_class0   = svm.SVC(C = 0.05, kernel = 'linear')
-    classifier_class1   = svm.SVC(C = 0.05, kernel = 'linear')
-    classifier_class2   = svm.SVC(C = 0.05  , kernel = 'linear')
-
-    y_class0            = np.zeros(shape = (n, 1,), dtype = int)
-    y_class1            = np.zeros(shape = (n, 1,), dtype = int)
-    y_class2            = np.zeros(shape = (n, 1,), dtype = int)
-
-    class_count = [0, 0, 0]
-
-
-    for i in range(n):
-        class_count[int(y_real[i][0])] += 1
-        if y_real[i][0]     == 0: # class 0
-            y_class0[i][0] = 1
-        elif y_real[i][0]   == 1: # class 1
-            y_class1[i][0] = 1
-        elif y_real[i][0]   == 2: # class 2
-            y_class2[i][0] = 1
-    
-    # Find the curve splitting class from the other two classes
-    classifier_class0.fit(x, y_class0.ravel())
-    classifier_class1.fit(x, y_class1.ravel())
-    classifier_class2.fit(x, y_class2.ravel())
-
-    y_pred0                 = classifier_class0.predict(x)
-    y_pred1                 = classifier_class1.predict(x)
-    y_pred2                 = classifier_class2.predict(x)
-
-    y_pred_result       = np.zeros(shape = (n, 1,))
-    fewest_class        = np.argmin(class_count)
-
-    for i in range(n):
-        if y_pred0[i] > y_pred1[i] and y_pred0[i] > y_pred2[i]:
-            y_pred_result[i][0] = 0
-        elif y_pred1[i] > y_pred0[i] and y_pred1[i] > y_pred2[i]:
-            y_pred_result[i][0] = 1
-        elif y_pred2[i] > y_pred0[i] and y_pred2[i] > y_pred1[i]:
-            y_pred_result[i][0] = 2
-        else:
-            # If conflicting values between the predictions
-            y_pred_result[i][0] = fewest_class
-    
-    mse     = (1/n)*np.matmul(np.transpose(y_pred_result-y_real), y_pred_result-y_real)
-    print("The MSE with SVM: {}".format(mse))
-    return (classifier_class0, classifier_class1, classifier_class2)
-
-
-def test_with_svm(x, y, classifier0, classifier1, classifier2):
-    n, _                    = np.shape(x)
-    y_pred0                 = classifier0.predict(x)
-    y_pred1                 = classifier1.predict(x)
-    y_pred2                 = classifier2.predict(x)
-
-    y_pred_result       = np.zeros(shape = (n, 1,))
-    
-    class_count = [0, 0, 0]
-    for i in range(n):
-        class_count[int(y[i][0])] += 1
-    fewest_class        = np.argmin(class_count)
-
-    for i in range(n):
-        if y_pred0[i] > y_pred1[i] and y_pred0[i] > y_pred2[i]:
-            y_pred_result[i][0] = 0
-        elif y_pred1[i] > y_pred0[i] and y_pred1[i] > y_pred2[i]:
-            y_pred_result[i][0] = 1
-        elif y_pred2[i] > y_pred0[i] and y_pred2[i] > y_pred1[i]:
-            y_pred_result[i][0] = 2
-        else:
-            # If conflicting values between the predictions
-            y_pred_result[i][0] = fewest_class
-    
-    confusion_matrix = cf.calculate_confusion_matrix(y_pred_result, y)
-    accuracy         = cf.calculate_accuracy(y_pred_result, y)
-
-    cf.print_confusion_matrix(confusion_matrix)
-    cf.print_accuracy(accuracy)

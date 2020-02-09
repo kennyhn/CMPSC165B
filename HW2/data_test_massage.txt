@@ -1,0 +1,265 @@
+Running Red wine LR run number 1 we get:
+
+Training of the parameters used 17.25188159942627s
+Testing used 0.0012822151184082031s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   4   49   11|
+                2: |   0    0    0|
+
+with accuracy   : 0.7656
+--------------------------------------------------------------------------------
+Running Red wine SVM run number 1 we get:
+
+Training of the parameters used 0.010592937469482422s
+Testing used 0.0011072158813476562s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    4    0|
+                1: |   3   39    5|
+                2: |   1    6    6|
+
+with accuracy   : 0.7031
+--------------------------------------------------------------------------------
+Running White wine LR run number 1 we get:
+
+Training of the parameters used 87.05290532112122s
+Testing used 0.022253036499023438s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   6  143   47|
+                2: |   0    0    0|
+
+with accuracy   : 0.7296
+--------------------------------------------------------------------------------
+Running White wine SVM run number 1 we get:
+
+Training of the parameters used 0.10318565368652344s
+Testing used 0.006837129592895508s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    2    4|
+                1: |   6  129   33|
+                2: |   0   12   10|
+
+with accuracy   : 0.7092
+--------------------------------------------------------------------------------
+Running Red wine LR run number 2 we get:
+
+Training of the parameters used 15.847418069839478s
+Testing used 0.0012950897216796875s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   2   54    8|
+                2: |   0    0    0|
+
+with accuracy   : 0.8438
+--------------------------------------------------------------------------------
+Running Red wine SVM run number 2 we get:
+
+Training of the parameters used 0.009016036987304688s
+Testing used 0.0010058879852294922s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   2   53    3|
+                2: |   0    1    5|
+
+with accuracy   : 0.9062
+--------------------------------------------------------------------------------
+Running White wine LR run number 2 we get:
+
+Training of the parameters used 90.15781593322754s
+Testing used 0.010178804397583008s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   8  147   41|
+                2: |   0    0    0|
+
+with accuracy   : 0.7500
+--------------------------------------------------------------------------------
+Running White wine SVM run number 2 we get:
+
+Training of the parameters used 0.10493254661560059s
+Testing used 0.006422758102416992s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   1    4    3|
+                1: |   6  134   25|
+                2: |   1    9   13|
+
+with accuracy   : 0.7551
+--------------------------------------------------------------------------------
+Running Red wine LR run number 3 we get:
+
+Training of the parameters used 16.890442371368408s
+Testing used 0.0013031959533691406s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   5   49   10|
+                2: |   0    0    0|
+
+with accuracy   : 0.7656
+--------------------------------------------------------------------------------
+Running Red wine SVM run number 3 we get:
+
+Training of the parameters used 0.00979471206665039s
+Testing used 0.0009996891021728516s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    2    1|
+                1: |   5   45    7|
+                2: |   0    2    2|
+
+with accuracy   : 0.7344
+--------------------------------------------------------------------------------
+Running White wine LR run number 3 we get:
+
+Training of the parameters used 92.91316056251526s
+Testing used 0.01093912124633789s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |  10  142   44|
+                2: |   0    0    0|
+
+with accuracy   : 0.7245
+--------------------------------------------------------------------------------
+Running White wine SVM run number 3 we get:
+
+Training of the parameters used 0.11159801483154297s
+Testing used 0.006789445877075195s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   1    4    6|
+                1: |   9  130   22|
+                2: |   0    8   16|
+
+with accuracy   : 0.7500
+--------------------------------------------------------------------------------
+Running Red wine LR run number 4 we get:
+
+Training of the parameters used 13.99031400680542s
+Testing used 0.0015411376953125s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   5   46   13|
+                2: |   0    0    0|
+
+with accuracy   : 0.7188
+--------------------------------------------------------------------------------
+Running Red wine SVM run number 4 we get:
+
+Training of the parameters used 0.010263681411743164s
+Testing used 0.001005411148071289s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    3    3|
+                1: |   5   38    7|
+                2: |   0    5    3|
+
+with accuracy   : 0.6406
+--------------------------------------------------------------------------------
+Running White wine LR run number 4 we get:
+
+Training of the parameters used 78.26312780380249s
+Testing used 0.011884212493896484s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   6  152   38|
+                2: |   0    0    0|
+
+with accuracy   : 0.7755
+--------------------------------------------------------------------------------
+Running White wine SVM run number 4 we get:
+
+Training of the parameters used 0.09682583808898926s
+Testing used 0.007274627685546875s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0   12    2|
+                1: |   6  133   24|
+                2: |   0    7   12|
+
+with accuracy   : 0.7398
+--------------------------------------------------------------------------------
+Running Red wine LR run number 5 we get:
+
+Training of the parameters used 15.416412115097046s
+Testing used 0.0019872188568115234s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   4   47   13|
+                2: |   0    0    0|
+
+with accuracy   : 0.7344
+--------------------------------------------------------------------------------
+Running Red wine SVM run number 5 we get:
+
+Training of the parameters used 0.019711971282958984s
+Testing used 0.002038240432739258s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   1    2    0|
+                1: |   3   42   11|
+                2: |   0    3    2|
+
+with accuracy   : 0.7031
+--------------------------------------------------------------------------------
+Running White wine LR run number 5 we get:
+
+Training of the parameters used 107.8709774017334s
+Testing used 0.011823892593383789s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   0    0    0|
+                1: |   7  150   39|
+                2: |   0    0    0|
+
+with accuracy   : 0.7653
+--------------------------------------------------------------------------------
+Running White wine SVM run number 5 we get:
+
+Training of the parameters used 0.1144721508026123s
+Testing used 0.006308555603027344s
+
+                  Confusion matrix                   
+Actual class ->        0    1    2 
+Predicted class 0: |   1    7    1|
+                1: |   6  130   18|
+                2: |   0   13   20|
+
+with accuracy   : 0.7704
+--------------------------------------------------------------------------------
+
+
+
+
+
