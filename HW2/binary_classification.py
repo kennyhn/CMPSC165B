@@ -81,27 +81,3 @@ def classify_prediction(x, param):
     
     y_pred          = np.vectorize(find_largest_of_classes)(f0, f1, f2)
     return y_pred
-    
-def remove_correlated_columns(x):
-    corr_limit          = 0.55
-    _, k                = np.shape(x)
-    high_corr_columns = np.zeros((k,k,))
-    # Find correlated columns
-    for first_column in range(k):
-        column1             = x[:, first_column]
-        for second_column in range(k):
-            column2     = x[:, second_column]
-            correlation = np.corrcoef(column1, column2)
-            if abs(correlation[0, 1]) >= corr_limit:
-                high_corr_columns[first_column][second_column] = 1
-    corr_counter = [-1 for _ in range(k)]
-    # Find the column that is most correlated with other columns
-    for rows in range(k):
-        for columns in range(k):
-            if high_corr_columns[rows, columns] == 1:
-                corr_counter[rows] += 1
-    if corr_counter[np.argmax(corr_counter)] > 0:
-        column      = np.argmax(corr_counter)
-        x           = np.delete(x, column, axis = 1)
-        x           = remove_correlated_columns(x)
-    return x

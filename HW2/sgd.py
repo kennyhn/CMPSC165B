@@ -7,12 +7,10 @@ def SGDSolver(phase, x=None, y=None, alpha=[1e-5, 1e-3], lam=[1e-3, 2], nepoch=N
     
     lam             = [1e-3, 0.2]           # regularization weight [min, max]
     alpha           = [1e-6, 1e-5]
-    nepoch          = 250 #250                 # sample # of epochs
+    nepoch          = 250                  # sample # of epochs
     epsilon         = 0.05
     y               = bc.classify_real_result(y) # Separate data into classes
 
-
-    x               = bc.remove_correlated_columns(x)
 
     # normalize data
     if x is not None:
