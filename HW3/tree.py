@@ -33,8 +33,12 @@ class Tree:
         limit = node.limit
         if limit != -1 and index != -1: # not a leaf node
             if sample[index] > limit:
+                if node.right_branch is None:
+                    print("Something is wrong")
                 best_node = self.findLeafNode(sample, node.right_branch)
             else:
+                if node.left_branch is None:
+                    print("Something is wrong")
                 best_node = self.findLeafNode(sample, node.left_branch)
         else:
             best_node = node
@@ -78,13 +82,13 @@ class Tree:
         num_of_data, _ = np.shape(x)
         best_feature_index      = -1
         best_limit              = -1
-        best_information_gain   = 0
+        best_impurity           = 1000 # The real should not be higher than 1
         best_right_prob         = [0, 0, 0]
         best_left_prob          = [0, 0, 0]
 
         information_parent      = giniImpurity(node.probabilities)
 
-        if information_parent == 1: # Data in this node only belongs to one class
+        if information_parent == 0: # Data in this node only belongs to one class
             return (None, None,) # Do not update left and right branch
         if node.depth_level == self.max_depth:
             return (None, None,) # Stop adding more levels to tree
@@ -93,7 +97,7 @@ class Tree:
         for feature_index in range(self.num_of_features):
             minimum, maximum = self.findMinMax(x, feature_index)
             if (maximum-minimum) != 0:
-                limit_step_length = (maximum-minimum)/10
+                limit_step_length = (maximum-minimum)/5
             else:
                 limit_step_length = 1
             for limit in np.arange(minimum, maximum+limit_step_length, limit_step_length):
@@ -103,11 +107,14 @@ class Tree:
                 probability_left, num_data_left, probability_right, num_data_right = data
                 p_l = num_data_left/num_of_data
                 p_r = num_data_right/num_of_data
-                information_gain = information_parent
-                information_gain -= p_l*giniImpurity(probability_left)
-                information_gain -= p_r*giniImpurity(probability_right)
-                if information_gain > best_information_gain:
-                    best_information_gain   = information_gain
+                
+                impurity          = p_l*giniImpurity(probability_left)
+                impurity         += p_r*giniImpurity(probability_right)
+                if impurity < best_impurity:
+                    # Want to minimize the impurity when splitting
+                    if impurity > 1:
+                        print("Something is wrong")
+                    best_impurity           = impurity
                     best_feature_index      = feature_index
                     best_limit              = limit
                     best_right_prob         = probability_right
@@ -165,27 +172,28 @@ class Tree:
                 training_data_x.put(xright)
                 training_data_y.put(yright)
 
+
 class Node:
     # Each node can only have maximum two children nodes
-    def __init__(self, probabilities, depth_level, feature_index = -1, limit = -1, left_branch = None, right_branch = None):
+    def __init__(self, probabilities, depth_level):
 
         self.probabilities  = probabilities # List of probabilities for each of the classes in the tree
         # Feature index tells which features is tested to decide what the next node is
-        self.feature_index  = feature_index # Leaf node will have feature index -1
-        self.limit          = limit         # Limit to see which node 
-        self.left_branch    = left_branch   # left branch if feature < limit
-        self.right_branch   = right_branch  # Right branch if feature > limit
+        self.feature_index  = -1 # Leaf node will have feature index -1
+        self.limit          = -1         # Limit to see which node to go
+        self.left_branch    = None   # left branch if feature < limit
+        self.right_branch   = None   # Right branch if feature > limit
         self.depth_level    = depth_level   # What level the node is at in the tree
     
 
 
-def DecisionTree(x = None, y = None, depth = 0, tree = None):
+def DecisionTree(phase, x = None, y = None, depth = -1, tree = None):
     # Features x, class y, tree depth and root node of tree
-    if x != None and y != None and depth != 0:
+    if phase.lower() == 'training' and x is not None and y is not None and depth != -1:
         return trainTree(x, y, depth) # Return a tree object
         
-    elif x != None and tree != None:
-        return testTree(x, tree)
+    elif phase.lower() == 'validation' and x is not None and tree is not None:
+        return testTree(x, tree) # Returns the results of all data
     else:
         print("Inputs are not valid")
 
@@ -208,12 +216,20 @@ def testTree(x, tree):
         val_list = list(tree.class_name_dict.values())
         name     = key_list[val_list.index(class_number)]
         result   = np.append(result, np.reshape(np.array(name), (1,1,)), axis = 0)
-    
     return result
 
+# Returns accuracy given the classified data and the actual data
+def calculateAccuracy(classified_y, actual_y):
+    total_data                      = 0
+    total_correct_classifications   = 0
 
+    for row in range(np.shape(classified_y)[0]):
+        total_data += 1
+        if classified_y[row, 0] == actual_y[row, 0]:
+            total_correct_classifications += 1
+    # return float of 3 decimals
 
-
+    return round((total_correct_classifications/total_data)*1000)/1000
 
 
 # three different impurity functions
