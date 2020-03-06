@@ -4,6 +4,7 @@ import data_handling as dh
 import comparison_functions as cf
 import tree
 
+
 def main():
     red_x, red_y            = dh.load_data('hw2_winequality-red_train.npy')
     red_y                   = dh.convertWineDataToClasses(red_y)
@@ -15,14 +16,15 @@ def main():
     class_dictionary        = {'poor': 0, 'median': 1, 'excellent': 2}
     #balanced_x, balanced_y  = dh.balanceData(red_x, red_y, class_dictionary.keys())
 
+    dtree                   = tree.trainTree(balanced_x, balanced_y, 3)
+    y_pred                  = tree.testTree(balanced_x, dtree)
 
-
-    ensemble                = tree.trainBaggingEnsemble(balanced_x, balanced_y, 15, 5)
-    y_pred                  = tree.testBaggingEnsemble(red_test_x, ensemble)
-    confusion_matrix        = cf.calculate_confusion_matrix(y_pred, red_test_y, class_dictionary)
+    #ensemble                = tree.trainBaggingEnsemble(balanced_x, balanced_y, 15, 5)
+    #y_pred                  = tree.testBaggingEnsemble(red_test_x, ensemble)
+    confusion_matrix        = cf.calculate_confusion_matrix(y_pred, balanced_y, class_dictionary)
     cf.print_confusion_matrix(confusion_matrix)
 
-    print(tree.calculateAccuracy(y_pred, red_test_y))
+    print(cf.calculateAccuracy(y_pred, balanced_y))
     return 0
 
 

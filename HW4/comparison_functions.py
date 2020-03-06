@@ -11,11 +11,18 @@ def calculate_confusion_matrix(y_pred, y_real, class_dictionary):
         confusion_matrix[class_dictionary[y_pred[i][0]]][class_dictionary[y_real[i][0]]] += 1
     return confusion_matrix
 
-def calculate_accuracy(y_pred, y_real):
-    confusion_matrix    = calculate_confusion_matrix(y_pred, y_real, {'poor': 0, 'median': 1, 'excellent': 2})
-    total_correct       = np.trace(confusion_matrix)
-    total_data          = np.shape(y_pred)[0]
-    return total_correct/total_data
+# Returns accuracy given the classified data and the actual data
+def calculateAccuracy(classified_y, actual_y):
+    total_data                      = 0
+    total_correct_classifications   = 0
+
+    for row in range(np.shape(classified_y)[0]):
+        total_data += 1
+        if classified_y[row, 0] == actual_y[row, 0]:
+            total_correct_classifications += 1
+            
+    return total_correct_classifications/total_data
+
 
 def print_confusion_matrix(confusion_matrix):
     print('Confusion Matrix: |{:4} {:4} {:4}|\n'.format(confusion_matrix[0][0], confusion_matrix[0][1], confusion_matrix[0][2]))
