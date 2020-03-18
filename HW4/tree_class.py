@@ -6,7 +6,10 @@ import queue as q
 import random
 
 class Tree:
-    def __init__(self, x, y, max_depth):
+    def __init__(self, x, y, max_depth, weight = None):
+        if weight is None:
+            weight = np.ones(shape = (np.shape(x)[0], 1,), dtype = int)
+
         _, self.num_of_features = np.shape(x)
         self.num_of_classes     = 0
         self.max_depth          = max_depth
@@ -14,14 +17,17 @@ class Tree:
 
         probability = []
         num_of_data = 0
+        row         = 0
         for classes in y:
             if classes[0] not in self.class_name_dict.keys():
                 self.class_name_dict[classes[0]] = self.num_of_classes
                 probability.append(0)
                 self.num_of_classes += 1
+                
             # count number of occurences in each
-            num_of_data += 1
-            probability[self.class_name_dict[classes[0]]] += 1    
+            num_of_data += weight[row, 0]
+            probability[self.class_name_dict[classes[0]]] += weight[row, 0] 
+            row += 1  
         
         # have to divide the occurences by total number of data
         self.root_node = Node([x/num_of_data for x in probability], 0)
@@ -45,23 +51,26 @@ class Tree:
             best_node = node
         return best_node # Returns the leaf node if at a leaf node
 
-    def calculateProbability(self, x, y, feature_index, limit):
+    def calculateProbability(self, x, y, feature_index, limit, weight = None):
     # What is the probability it will become class w_j given feature limit
     # Returns two lists with the probabilities of all classes for left and right branch
+        if weight is None:
+            weight = np.ones(shape = (np.shape(x)[0], 1,), dtype = int)
         probability_right           = [0 for _ in range(self.num_of_classes)]
         probability_left            = [0 for _ in range(self.num_of_classes)]
         total_num_of_data_right     = 0
         total_num_of_data_left      = 0
         rows, _                     = np.shape(x)
         for row_index in range(rows):
+            prob_added = weight[row_index, 0]
             if x[row_index, feature_index] > limit:
-                total_num_of_data_right += 1
+                total_num_of_data_right += prob_added
                 class_value = self.class_name_dict[y[row_index, 0]] 
-                probability_right[class_value] += 1
+                probability_right[class_value] += prob_added
             else:
-                total_num_of_data_left += 1
+                total_num_of_data_left += prob_added
                 class_value = self.class_name_dict[y[row_index, 0]] 
-                probability_left[class_value] += 1
+                probability_left[class_value] += prob_added
 
         probability_right = [x/total_num_of_data_right if x!=0 else 0 for x in probability_right]
         probability_left = [x/total_num_of_data_left if x!= 0 else 0 for x in probability_left]
@@ -106,7 +115,7 @@ class Tree:
         return (left_node, right_node) # To get to a new depth
     
     
-    def updateNodeBoosting(self, x, y, node):
+    def updateNodeBoosting(self, x, y, node, weights = None):
         num_of_data, _ = np.shape(x)
         best_feature_index      = -1
         best_limit              = -1
@@ -114,6 +123,9 @@ class Tree:
         best_right_prob         = [0, 0, 0]
         best_left_prob          = [0, 0, 0]
 
+        if weights is None:
+            weights = np.ones(shape = (num_of_data, 1,), dtype = int)
+        
         information_parent      = hf.giniImpurity(node.probabilities)
 
         if information_parent == 0: # Data in this node only belongs to one class
@@ -131,7 +143,7 @@ class Tree:
             for limit in np.arange(minimum, maximum+limit_step_length, limit_step_length):
                 # Try out 10 different limits between min and max values of features
                 # to see which one gives the greatest impurity
-                data = self.calculateProbability(x, y, feature_index, limit)
+                data = self.calculateProbability(x, y, feature_index, limit, weights)
                 probability_left, num_data_left, probability_right, num_data_right = data
                 p_l = num_data_left/num_of_data
                 p_r = num_data_right/num_of_data
@@ -141,6 +153,7 @@ class Tree:
                 if impurity < best_impurity:
                     # Want to minimize the impurity when splitting
                     if impurity > 1:
+                        print(f' Impurity: {impurity}\n probabilities: {node.probabilities}')
                         print("Something is wrong")
                     best_impurity           = impurity
                     best_feature_index      = feature_index
@@ -181,7 +194,7 @@ class Tree:
         return (left_data_x, left_data_y, right_data_x, right_data_y,)
 
 
-    def train(self, x, y, mode):
+    def train(self, x, y, mode, weights = None):
         node_expansion_queue = q.Queue()
         node_expansion_queue.put(self.root_node)
         training_data_x      = q.Queue()
@@ -196,7 +209,7 @@ class Tree:
             if mode.lower() == 'bagging':
                 left_node, right_node = self.updateNodeBagging(x_data, y_data, node_to_train)
             elif mode.lower() == 'boosting':
-                left_node, right_node = self.updateNodeBoosting(x_data, y_data, node_to_train)
+                left_node, right_node = self.updateNodeBoosting(x_data, y_data, node_to_train, weights)
 
             if left_node != None and right_node != None:
                 node_expansion_queue.put(left_node)

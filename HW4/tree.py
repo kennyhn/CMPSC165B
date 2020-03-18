@@ -15,12 +15,12 @@ def DecisionTree(phase, x = None, y = None, depth = -1, ensemble = None):
     else:
         print("Inputs are not valid")
 
-def trainTree(x, y, depth):
+def trainTree(x, y, depth, weights = None):
     # return tree that have been trained
     
     # Initiate tree object
     dTree = Tree(x, y, depth) # Need to create the tree
-    dTree.train(x,y, 'boosting') # Train it bruh
+    dTree.train(x,y, 'boosting', weights) # Train it bruh
     # TBD
     return dTree
 
@@ -37,14 +37,14 @@ def testTree(x, tree):
     return result
 
 def trainBaggingEnsemble(x, y, depth, num_of_trees):
-    percentage              = 7/10 
+    percentage              = 3/4 
     ensemble                = []
     rows, _                 = np.shape(x)
     row_indexes             = np.arange(rows)
     num_of_training_data    = math.ceil(rows*percentage)
     for _ in range(num_of_trees):
-        # I want to only use 70% of the data when training
-        # Randomize which data to pull 70% out of x for each tree
+        # I want to only use 75% of the data when training
+        # Randomize which data to pull 75% out of x for each tree
         np.random.shuffle(row_indexes)
         x     = x[row_indexes, :]
         y     = y[row_indexes, :]
@@ -54,8 +54,9 @@ def trainBaggingEnsemble(x, y, depth, num_of_trees):
         dTree = Tree(training_x, training_y, depth)
         dTree.train(training_x, training_y, 'bagging')
         ensemble.append(dTree)
-
+    
     return ensemble
+    
 
 def testBaggingEnsemble(x, ensemble):
     # ensemble is a list of (5) trees
