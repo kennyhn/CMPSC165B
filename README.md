@@ -1,6 +1,6 @@
 # CMPSC 165B - Machine Learning
 Made by Kenny Hoang Nguyen.
-Subject taken at University of California, Santa Barbara winter quarter 2020
+Course taken at University of California, Santa Barbara winter quarter 2020
 
 #### HW1
 Multivariable linear regression. Uses stochastic gradient descent of cost function f(x) = wx+b to find the best parameters w to fit the line to the training data. Got 80% accuracy
